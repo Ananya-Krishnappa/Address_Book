@@ -13,7 +13,7 @@ public class AddressBookMain {
 			System.out.println("\n\t\tEnter A to (A)dd Person ");
 			System.out.println("\t\tEnter D to (D)elete Person");
 			System.out.println("\t\tEnter M to (M)odify Person");
-			System.out.println("\t\tEnter Q to Quit");
+			System.out.println("\t\tEnter Q to Quit ");
 			System.out.print("\n\tPlease enter your choice: ");
 			char choice = sc.nextLine().toUpperCase().charAt(0);
 
