@@ -3,14 +3,19 @@ package com.bridgelabz;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class AddressBookMain {
 	private static Scanner sc = new Scanner(System.in);
 	private static List<Person> personList = new ArrayList<Person>();
 
 	public static void main(String[] args) {
+		initiateAddressBook();
+	}
 
+	/**
+	 * this method is used to initiate address book
+	 */
+	private static void initiateAddressBook() {
 		boolean switcher = true;
 		do {
 			System.out.println("\n\tAddress Book Menu");
@@ -46,34 +51,22 @@ public class AddressBookMain {
 
 			}
 		} while (switcher != false);
+
 	}
 
+	/**
+	 * Perform create,edit or delete person based on actions given
+	 * 
+	 * @param action
+	 * @return
+	 */
 	private static Person inputUserDetails(String action) {
 		if (action.equalsIgnoreCase("create")) {
 			Person newPerson = new Person();
 			System.out.println("\nTo add a person, follow the prompts.");
-
 			System.out.print("\nEnter Firstname: ");
 			newPerson.setFirstName(sc.nextLine());
-
-			System.out.print("\nEnter Lastname: ");
-			newPerson.setLastName(sc.nextLine());
-
-			System.out.print("Enter Address: ");
-			newPerson.setAddress(sc.nextLine());
-
-			System.out.print("Enter City: ");
-			newPerson.setCity(sc.nextLine());
-
-			System.out.print("Enter State: ");
-			newPerson.setState(sc.nextLine());
-
-			System.out.print("Enter Zip: ");
-			newPerson.setZip(sc.nextLine());
-
-			System.out.print("Enter Phone Number: ");
-			newPerson.setPhoneNumber(sc.nextLine());
-
+			inputCommonFields(newPerson);
 			personList.add(newPerson);
 			System.out.println(personList.toString());
 			System.out.println("\nYou have successfully added a new person!");
@@ -95,23 +88,7 @@ public class AddressBookMain {
 			}
 			if (null != filteredList && filteredList.size() >= 1) {
 				Person person = filteredList.get(0);
-				System.out.print("\nEnter Lastname: ");
-				person.setLastName(sc.nextLine());
-
-				System.out.print("Enter Address: ");
-				person.setAddress(sc.nextLine());
-
-				System.out.print("Enter City: ");
-				person.setCity(sc.nextLine());
-
-				System.out.print("Enter State: ");
-				person.setState(sc.nextLine());
-
-				System.out.print("Enter Zip: ");
-				person.setZip(sc.nextLine());
-
-				System.out.print("Enter Phone Number: ");
-				person.setPhoneNumber(sc.nextLine());
+				inputCommonFields(person);
 
 				/*
 				 * personList.stream().map(p ->
@@ -142,5 +119,31 @@ public class AddressBookMain {
 			System.out.println(personList.toString());
 		}
 		return null;
+	}
+
+	/**
+	 * common input fields for both create and edit
+	 * 
+	 * @param person
+	 */
+	private static void inputCommonFields(Person person) {
+		System.out.print("\nEnter Lastname: ");
+		person.setLastName(sc.nextLine());
+
+		System.out.print("Enter Address: ");
+		person.setAddress(sc.nextLine());
+
+		System.out.print("Enter City: ");
+		person.setCity(sc.nextLine());
+
+		System.out.print("Enter State: ");
+		person.setState(sc.nextLine());
+
+		System.out.print("Enter Zip: ");
+		person.setZip(sc.nextLine());
+
+		System.out.print("Enter Phone Number: ");
+		person.setPhoneNumber(sc.nextLine());
+
 	}
 }

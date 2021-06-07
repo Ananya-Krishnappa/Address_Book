@@ -14,7 +14,8 @@ public class Person {
 	}
 
 	/**
-	 * setting and getting values for Person.
+	 * setting and getting values for Person object
+	 * 
 	 * @param firstName
 	 * @param lastName
 	 * @param address
