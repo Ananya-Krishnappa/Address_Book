@@ -1,11 +1,13 @@
 package com.bridgelabz;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class AddressBookMain {
 	private static Scanner sc = new Scanner(System.in);
-	private static ArrayList<Person> personList = new ArrayList<Person>();
+	private static List<Person> personList = new ArrayList<Person>();
 
 	public static void main(String[] args) {
 
@@ -30,7 +32,7 @@ public class AddressBookMain {
 				break;
 
 			case 'D':
-
+				inputUserDetails("delete");
 				break;
 			case 'M':
 				inputUserDetails("edit");
@@ -76,15 +78,15 @@ public class AddressBookMain {
 			System.out.println(personList.toString());
 			System.out.println("\nYou have successfully added a new person!");
 			return newPerson;
-		} else {
+		} else if (action.equalsIgnoreCase("edit")) {
 			System.out.println("\nTo edit a person, follow the prompts.");
 			System.out.println("\nEnter the first name of the person to edit");
 			String firstName = sc.nextLine();
 			/*
 			 * personList.stream().filter(person ->
-			 * person.getFirstName().equalsIgnoreCase(firstName)).findFirst() .orElse(null);
+			 * person.getFirstName().equalsIgnoreCase(firstName)).findFirst().orElse(null);
 			 */
-			ArrayList<Person> filteredList = new ArrayList<Person>();
+			List<Person> filteredList = new ArrayList<Person>();
 			for (int i = 0; i < personList.size(); i++) {
 				if (personList.get(i).getFirstName().equalsIgnoreCase(firstName)) {
 					filteredList.add(personList.get(i));
@@ -123,6 +125,21 @@ public class AddressBookMain {
 
 				System.out.println(personList.toString());
 			}
+		} else if (action.equalsIgnoreCase("delete")) {
+			System.out.println("\nTo delete a person, follow the prompts.");
+			System.out.println("\nEnter the first name of the person to be deleted");
+			String firstName = sc.nextLine();
+			/*
+			 * List<Person> filteredCollection = personList.stream() .filter(p ->
+			 * !(p.getFirstName().equalsIgnoreCase(firstName))).collect(Collectors.toList())
+			 * ;
+			 */
+			for (int k = 0; k < personList.size(); k++) {
+				if (personList.get(k).getFirstName().equalsIgnoreCase(firstName)) {
+					personList.remove(k);
+				}
+			}
+			System.out.println(personList.toString());
 		}
 		return null;
 	}
