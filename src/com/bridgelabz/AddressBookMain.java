@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class AddressBookMain {
+	private static Scanner sc = new Scanner(System.in);
+	private static ArrayList<Person> personList = new ArrayList<Person>();
+
 	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
 
 		boolean switcher = true;
 		do {
@@ -22,45 +24,16 @@ public class AddressBookMain {
 				choice = sc.nextLine().toUpperCase().charAt(0);
 			}
 
-			Person newPerson = new Person();
-			ArrayList<Person> personList = new ArrayList<Person>();
-
 			switch (choice) {
 			case 'A':
-				System.out.println("\nTo add a person, follow the prompts.");
-
-				System.out.print("\nEnter Fullname: ");
-				newPerson.setFirstName(sc.nextLine());
-
-				System.out.print("\nEnter Fullname: ");
-				newPerson.setLastName(sc.nextLine());
-
-				System.out.print("Enter Address: ");
-				newPerson.setAddress(sc.nextLine());
-
-				System.out.print("Enter City: ");
-				newPerson.setCity(sc.nextLine());
-
-				System.out.print("Enter State: ");
-				newPerson.setState(sc.nextLine());
-
-				System.out.print("Enter Zip: ");
-				newPerson.setZip(sc.nextLine());
-
-				System.out.print("Enter Phone Number: ");
-				newPerson.setPhoneNumber(sc.nextLine());
-
-				personList.add(newPerson);
-				System.out.println(personList.get(personList.size() - 1).toString());
-				System.out.println("\nYou have successfully added a new person!");
-
+				inputUserDetails("create");
 				break;
 
 			case 'D':
 
 				break;
 			case 'M':
-
+				inputUserDetails("edit");
 				break;
 			case 'Q':
 				switcher = false;
@@ -71,5 +44,86 @@ public class AddressBookMain {
 
 			}
 		} while (switcher != false);
+	}
+
+	private static Person inputUserDetails(String action) {
+		if (action.equalsIgnoreCase("create")) {
+			Person newPerson = new Person();
+			System.out.println("\nTo add a person, follow the prompts.");
+
+			System.out.print("\nEnter Firstname: ");
+			newPerson.setFirstName(sc.nextLine());
+
+			System.out.print("\nEnter Lastname: ");
+			newPerson.setLastName(sc.nextLine());
+
+			System.out.print("Enter Address: ");
+			newPerson.setAddress(sc.nextLine());
+
+			System.out.print("Enter City: ");
+			newPerson.setCity(sc.nextLine());
+
+			System.out.print("Enter State: ");
+			newPerson.setState(sc.nextLine());
+
+			System.out.print("Enter Zip: ");
+			newPerson.setZip(sc.nextLine());
+
+			System.out.print("Enter Phone Number: ");
+			newPerson.setPhoneNumber(sc.nextLine());
+
+			personList.add(newPerson);
+			System.out.println(personList.toString());
+			System.out.println("\nYou have successfully added a new person!");
+			return newPerson;
+		} else {
+			System.out.println("\nTo edit a person, follow the prompts.");
+			System.out.println("\nEnter the first name of the person to edit");
+			String firstName = sc.nextLine();
+			/*
+			 * personList.stream().filter(person ->
+			 * person.getFirstName().equalsIgnoreCase(firstName)).findFirst() .orElse(null);
+			 */
+			ArrayList<Person> filteredList = new ArrayList<Person>();
+			for (int i = 0; i < personList.size(); i++) {
+				if (personList.get(i).getFirstName().equalsIgnoreCase(firstName)) {
+					filteredList.add(personList.get(i));
+					break;
+				}
+			}
+			if (null != filteredList && filteredList.size() >= 1) {
+				Person person = filteredList.get(0);
+				System.out.print("\nEnter Lastname: ");
+				person.setLastName(sc.nextLine());
+
+				System.out.print("Enter Address: ");
+				person.setAddress(sc.nextLine());
+
+				System.out.print("Enter City: ");
+				person.setCity(sc.nextLine());
+
+				System.out.print("Enter State: ");
+				person.setState(sc.nextLine());
+
+				System.out.print("Enter Zip: ");
+				person.setZip(sc.nextLine());
+
+				System.out.print("Enter Phone Number: ");
+				person.setPhoneNumber(sc.nextLine());
+
+				/*
+				 * personList.stream().map(p ->
+				 * p.getFirstName().equalsIgnoreCase(person.getFirstName()) ? person : p);
+				 */
+				for (int j = 0; j < personList.size(); j++) {
+					if (personList.get(j).getFirstName().equalsIgnoreCase(person.getFirstName())) {
+						personList.set(j, person);
+					}
+				}
+
+				System.out.println(personList.toString());
+			}
+		}
+		return null;
 	}
 }
