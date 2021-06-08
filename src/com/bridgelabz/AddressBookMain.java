@@ -1,27 +1,36 @@
 package com.bridgelabz;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class AddressBookMain {
-	private static Scanner sc = new Scanner(System.in);
-	private List<Person> personList;
+public class AddressBookMain implements IAddressBook {
+	private Scanner sc;
+	private Map<String, AddressBook> addressBookMap;
 
 	public AddressBookMain() {
-		this.personList = new ArrayList<Person>();
+		this.sc = new Scanner(System.in);
+		/* this.addressBookList = new ArrayList<AddressBook>(); */
+		this.addressBookMap = new HashMap<String, AddressBook>();
 	}
 
 	public static void main(String[] args) {
-		AddressBookMain addressBookMain = new AddressBookMain();
-		addressBookMain.initiateAddressBook();
+		IAddressBook addressBookName = new AddressBookMain();
+		addressBookName.addAddressBook("Book1", new ArrayList<Person>());
+		addressBookName.addAddressBook("Book2", new ArrayList<Person>());
+		addressBookName.addAddressBook("Book3", new ArrayList<Person>());
+		addressBookName.populateAddressBook("Book1");
+		addressBookName.populateAddressBook("Book2");
 	}
 
 	/**
 	 * this method is used to initiate address book
 	 */
-	private void initiateAddressBook() {
+	@Override
+	public void populateAddressBook(String bookName) {
 		boolean switcher = true;
 		do {
 			System.out.println("\n\tAddress Book Menu");
@@ -37,18 +46,16 @@ public class AddressBookMain {
 			}
 			switch (choice) {
 			case 'A':
-				inputUserDetails("create");
+				inputUserDetails("create", bookName);
 				break;
 			case 'D':
-				inputUserDetails("delete");
+				inputUserDetails("delete", bookName);
 				break;
 			case 'M':
-				inputUserDetails("edit");
+				inputUserDetails("edit", bookName);
 				break;
 			case 'Q':
 				switcher = false;
-				sc.close();
-				System.exit(0);
 				break;
 			default:
 			}
@@ -61,7 +68,8 @@ public class AddressBookMain {
 	 * @param action
 	 * @return
 	 */
-	private Person inputUserDetails(String action) {
+	private void inputUserDetails(String action, String bookName) {
+		List<Person> personList = addressBookMap.get(bookName).getPersonList();
 		if (action.equalsIgnoreCase("create")) {
 			Person newPerson = new Person();
 			System.out.println("\nTo add a person, follow the prompts.");
@@ -69,9 +77,8 @@ public class AddressBookMain {
 			newPerson.setFirstName(sc.nextLine());
 			inputCommonFields(newPerson);
 			personList.add(newPerson);
-			System.out.println(personList.toString());
+			System.out.println(addressBookMap.get(bookName).toString());
 			System.out.println("\nYou have successfully added a new person!");
-			return newPerson;
 		} else if (action.equalsIgnoreCase("edit")) {
 			System.out.println("\nTo edit a person, follow the prompts.");
 			System.out.println("\nEnter the first name of the person to edit");
@@ -83,7 +90,7 @@ public class AddressBookMain {
 				personList = personList.stream()
 						.map(p -> p.getFirstName().equalsIgnoreCase(editedPerson.getFirstName()) ? editedPerson : p)
 						.collect(Collectors.toList());
-				System.out.println(personList.toString());
+				System.out.println(addressBookMap.get(bookName).toString());
 			}
 		} else if (action.equalsIgnoreCase("delete")) {
 			System.out.println("\nTo delete a person, follow the prompts.");
@@ -91,9 +98,10 @@ public class AddressBookMain {
 			String firstName = sc.nextLine();
 			personList = personList.stream().filter(p -> !(p.getFirstName().equalsIgnoreCase(firstName)))
 					.collect(Collectors.toList());
-			System.out.println(personList.toString());
+			System.out.println(addressBookMap.get(bookName).toString());
 		}
-		return null;
+		addressBookMap.get(bookName).setPersonList(personList);
+
 	}
 
 	/**
@@ -114,5 +122,12 @@ public class AddressBookMain {
 		person.setZip(sc.nextLine());
 		System.out.print("Enter Phone Number: ");
 		person.setPhoneNumber(sc.nextLine());
+	}
+
+	@Override
+	public void addAddressBook(String name, List<Person> personList) {
+		AddressBook addressBook = new AddressBook(name, personList);
+		/* addressBookList.add(addressBook); */
+		addressBookMap.put(name, addressBook);
 	}
 }
