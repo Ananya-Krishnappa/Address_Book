@@ -7,7 +7,11 @@ import java.util.stream.Collectors;
 
 public class AddressBookMain {
 	private static Scanner sc = new Scanner(System.in);
-	private static List<Person> personList = new ArrayList<Person>();
+	private List<Person> personList;
+
+	public AddressBookMain() {
+		this.personList = new ArrayList<Person>();
+	}
 
 	public static void main(String[] args) {
 		AddressBookMain addressBookMain = new AddressBookMain();
