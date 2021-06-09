@@ -19,9 +19,9 @@ public class AddressBookMain implements IAddressBook {
 
 	public static void main(String[] args) {
 		IAddressBook addressBookName = new AddressBookMain();
-		addressBookName.addAddressBook("Book1", new ArrayList<Person>());
-		addressBookName.addAddressBook("Book2", new ArrayList<Person>());
-		addressBookName.addAddressBook("Book3", new ArrayList<Person>());
+		addressBookName.addAddressBook("Book1");
+		addressBookName.addAddressBook("Book2");
+		addressBookName.addAddressBook("Book3");
 		addressBookName.populateAddressBook("Book1");
 		addressBookName.populateAddressBook("Book2");
 	}
@@ -125,7 +125,8 @@ public class AddressBookMain implements IAddressBook {
 	}
 
 	@Override
-	public void addAddressBook(String name, List<Person> personList) {
+	public void addAddressBook(String name) {
+		List<Person> personList=new ArrayList<Person>();
 		AddressBook addressBook = new AddressBook(name, personList);
 		/* addressBookList.add(addressBook); */
 		addressBookMap.put(name, addressBook);
