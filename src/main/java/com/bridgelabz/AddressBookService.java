@@ -15,11 +15,15 @@ public class AddressBookService implements IAddressBook {
 	private static final Logger LOG = LogManager.getLogger(AddressBookMain.class);
 	private Scanner sc;
 	private Map<String, AddressBook> addressBookMap;
+	private Map<String, List<Person>> cityAndPersonMap;
+	private Map<String, List<Person>> stateAndPersonMap;
 
 	public AddressBookService() {
 		this.sc = new Scanner(System.in);
 		/* this.addressBookList = new ArrayList<AddressBook>(); */
 		this.addressBookMap = new HashMap<String, AddressBook>();
+		this.cityAndPersonMap = new HashMap<String, List<Person>>();
+		this.stateAndPersonMap = new HashMap<String, List<Person>>();
 	}
 
 	/**
@@ -112,7 +116,7 @@ public class AddressBookService implements IAddressBook {
 	/**
 	 * To find person by city.
 	 */
-	public List<Person> findPersonByCity(String city) {
+	public Map<String, List<Person>> findPersonByCity(String city) {
 		List<Person> personList = new ArrayList<Person>();
 		Iterator addressBookIterator = addressBookMap.entrySet().iterator();
 		while (addressBookIterator.hasNext()) {
@@ -129,7 +133,32 @@ public class AddressBookService implements IAddressBook {
 			}
 		}
 		LOG.debug("PersonList in city " + city + " is " + personList.toString());
-		return personList;
+		cityAndPersonMap.put(city, personList);
+		return cityAndPersonMap;
+	}
+
+	/**
+	 * To find person by state.
+	 */
+	public Map<String, List<Person>> findPersonByState(String state) {
+		List<Person> personList = new ArrayList<Person>();
+		Iterator addressBookIterator = addressBookMap.entrySet().iterator();
+		while (addressBookIterator.hasNext()) {
+			Map.Entry mapElement = (Map.Entry) addressBookIterator.next();
+			AddressBook addressbook = (AddressBook) mapElement.getValue();
+			Map<String, Person> personMap = addressbook.getPersonMap();
+			Iterator personMapIterator = personMap.entrySet().iterator();
+			while (personMapIterator.hasNext()) {
+				Map.Entry personMapEntry = (Map.Entry) personMapIterator.next();
+				Person person = (Person) personMapEntry.getValue();
+				if (person.getState().equalsIgnoreCase(state)) {
+					personList.add(person);
+				}
+			}
+		}
+		LOG.debug("PersonList in state " + state + " is " + personList.toString());
+		stateAndPersonMap.put(state, personList);
+		return stateAndPersonMap;
 	}
 
 	/**
