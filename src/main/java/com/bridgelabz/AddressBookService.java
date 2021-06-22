@@ -162,6 +162,24 @@ public class AddressBookService implements IAddressBook {
 	}
 
 	/**
+	 * to get the count of person by city
+	 */
+	public int getPersonCountByCity(String city) {
+		Map<String, List<Person>> cityAndPersonMap = findPersonByCity(city);
+		LOG.debug("Count of PersonList in city " + city + " is " + cityAndPersonMap.get(city).size());
+		return cityAndPersonMap.get(city).size();
+	}
+
+	/**
+	 * to get the count of person by state
+	 */
+	public int getPersonCountByState(String state) {
+		Map<String, List<Person>> stateAndPersonMap = findPersonByState(state);
+		LOG.debug("Count of PersonList in state " + state + " is " + stateAndPersonMap.get(state).size());
+		return stateAndPersonMap.get(state).size();
+	}
+
+	/**
 	 * common input fields for both create and edit
 	 * 
 	 * @param person

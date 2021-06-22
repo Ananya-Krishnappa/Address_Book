@@ -16,6 +16,8 @@ public class AddressBookMain {
 			addressBookName.populateAddressBook("Book1");
 			addressBookName.findPersonByCity("Bengaluru");
 			addressBookName.findPersonByState("Karnataka");
+			addressBookName.getPersonCountByCity("Bengaluru");
+			addressBookName.getPersonCountByState("Karnataka");
 		} catch (AddressBookException e) {
 			System.exit(1);
 		}

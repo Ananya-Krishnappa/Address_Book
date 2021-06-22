@@ -12,4 +12,7 @@ public interface IAddressBook {
 
 	public Map<String, List<Person>> findPersonByState(String state);
 
+	public int getPersonCountByState(String state);
+
+	public int getPersonCountByCity(String city);
 }
