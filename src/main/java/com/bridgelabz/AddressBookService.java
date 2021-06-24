@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -177,6 +178,35 @@ public class AddressBookService implements IAddressBook {
 		Map<String, List<Person>> stateAndPersonMap = findPersonByState(state);
 		LOG.debug("Count of PersonList in state " + state + " is " + stateAndPersonMap.get(state).size());
 		return stateAndPersonMap.get(state).size();
+	}
+
+	/**
+	 * This method sorts the person name in alphabetical order
+	 */
+	public void sortByPersonName() {
+		Iterator addressBookIterator = addressBookMap.entrySet().iterator();
+		while (addressBookIterator.hasNext()) {
+			Map.Entry mapElement = (Map.Entry) addressBookIterator.next();
+			AddressBook addressbook = (AddressBook) mapElement.getValue();
+			Map<String, Person> personMap = addressbook.getPersonMap();
+			sortbykey(personMap);
+		}
+	}
+
+	/**
+	 * Function to sort map by Key
+	 * 
+	 * @param personMap
+	 * @return sorted
+	 */
+	private TreeMap<String, Person> sortbykey(Map<String, Person> personMap) {
+		TreeMap<String, Person> sorted = new TreeMap<String, Person>();
+		sorted.putAll(personMap);
+		LOG.debug("Person name in sorted order");
+		for (Map.Entry<String, Person> entry : sorted.entrySet()) {
+			LOG.debug("FirstName = " + entry.getKey() + ", Person = " + entry.getValue().toString());
+		}
+		return sorted;
 	}
 
 	/**
