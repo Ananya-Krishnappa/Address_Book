@@ -1,12 +1,12 @@
 package com.bridgelabz;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +21,6 @@ public class AddressBookService implements IAddressBook {
 
 	public AddressBookService() {
 		this.sc = new Scanner(System.in);
-		/* this.addressBookList = new ArrayList<AddressBook>(); */
 		this.addressBookMap = new HashMap<String, AddressBook>();
 		this.cityAndPersonMap = new HashMap<String, List<Person>>();
 		this.stateAndPersonMap = new HashMap<String, List<Person>>();
@@ -36,26 +35,26 @@ public class AddressBookService implements IAddressBook {
 	public void populateAddressBook(String bookName) throws AddressBookException {
 		boolean switcher = true;
 		do {
-			System.out.println("\n\tAddress Book Menu");
-			System.out.println("\n\t\tEnter A to (A)dd Person ");
-			System.out.println("\t\tEnter D to (D)elete Person");
-			System.out.println("\t\tEnter M to (M)odify Person");
-			System.out.println("\t\tEnter Q to Quit ");
+			LOG.info("\n\tAddress Book Menu");
+			LOG.info("\n\t\tEnter A to (A)dd Person ");
+			LOG.info("\t\tEnter D to (D)elete Person");
+			LOG.info("\t\tEnter M to (M)odify Person");
+			LOG.info("\t\tEnter Q to Quit ");
 			System.out.print("\n\tPlease enter your choice: ");
 			char choice = sc.nextLine().toUpperCase().charAt(0);
 			while ((choice != 'A') && (choice != 'D') && (choice != 'M') && (choice != 'Q')) {
-				System.out.println("Invalid choice!  Please select (A)dd, (D)elete, (M)odify or (Q)uit: ");
+				LOG.info("Invalid choice!  Please select (A)dd, (D)elete, (M)odify or (Q)uit: ");
 				choice = sc.nextLine().toUpperCase().charAt(0);
 			}
 			switch (choice) {
 			case 'A':
-				inputUserDetails("create", bookName);
+				inputUserDetails(ActionType.CREATE, bookName);
 				break;
 			case 'D':
-				inputUserDetails("delete", bookName);
+				inputUserDetails(ActionType.DELETE, bookName);
 				break;
 			case 'M':
-				inputUserDetails("edit", bookName);
+				inputUserDetails(ActionType.EDIT, bookName);
 				break;
 			case 'Q':
 				switcher = false;
@@ -68,17 +67,18 @@ public class AddressBookService implements IAddressBook {
 	/**
 	 * Perform create,edit or delete person based on actions given
 	 * 
-	 * @param action
+	 * @param actionType
 	 * @return
 	 * @throws AddressBookException
 	 */
-	private void inputUserDetails(String action, String bookName) throws AddressBookException {
+	private void inputUserDetails(ActionType actionType, String bookName) throws AddressBookException {
 		try {
 			Map<String, Person> personMap = addressBookMap.get(bookName).getPersonMap();
-			if (action.equalsIgnoreCase("create")) {
+			switch (actionType) {
+			case CREATE:
 				Person newPerson = new Person();
-				System.out.println("\nTo add a person, follow the prompts.");
-				System.out.print("\nEnter Firstname: ");
+				LOG.info("\nTo add a person, follow the prompts.");
+				LOG.info("\nEnter Firstname: ");
 				newPerson.setFirstName(sc.nextLine());
 				inputCommonFields(newPerson);
 				if (personMap.containsKey(newPerson.getFirstName())) {
@@ -89,21 +89,24 @@ public class AddressBookService implements IAddressBook {
 					LOG.debug(addressBookMap.get(bookName).toString());
 					LOG.debug("\nYou have successfully added a new person!");
 				}
-			} else if (action.equalsIgnoreCase("edit")) {
-				System.out.println("\nTo edit a person, follow the prompts.");
-				System.out.println("\nEnter the first name of the person to edit");
+				break;
+			case EDIT:
+				LOG.info("\nTo edit a person, follow the prompts.");
+				LOG.info("\nEnter the first name of the person to edit");
 				String firstName = sc.nextLine();
 				Person editedPerson = personMap.get(firstName);
 				if (null != editedPerson && null != editedPerson.getFirstName()) {
 					inputCommonFields(editedPerson);
 					LOG.debug(addressBookMap.get(bookName).toString());
 				}
-			} else if (action.equalsIgnoreCase("delete")) {
-				System.out.println("\nTo delete a person, follow the prompts.");
-				System.out.println("\nEnter the first name of the person to be deleted");
-				String firstName = sc.nextLine();
-				personMap.remove(firstName);
+				break;
+			case DELETE:
+				LOG.info("\nTo delete a person, follow the prompts.");
+				LOG.info("\nEnter the first name of the person to be deleted");
+				String name = sc.nextLine();
+				personMap.remove(name);
 				LOG.debug(addressBookMap.get(bookName).toString());
+				break;
 			}
 			addressBookMap.get(bookName).setPersonMap(personMap);
 		} catch (AddressBookException e) {
@@ -189,24 +192,42 @@ public class AddressBookService implements IAddressBook {
 			Map.Entry mapElement = (Map.Entry) addressBookIterator.next();
 			AddressBook addressbook = (AddressBook) mapElement.getValue();
 			Map<String, Person> personMap = addressbook.getPersonMap();
-			sortbykey(personMap);
+			LOG.debug("Sorting person by first name");
+			personMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(System.out::println);
 		}
 	}
 
 	/**
-	 * Function to sort map by Key
+	 * sort person by state,city or zip.
 	 * 
-	 * @param personMap
-	 * @return sorted
+	 * @param property
 	 */
-	private TreeMap<String, Person> sortbykey(Map<String, Person> personMap) {
-		TreeMap<String, Person> sorted = new TreeMap<String, Person>();
-		sorted.putAll(personMap);
-		LOG.debug("Person name in sorted order");
-		for (Map.Entry<String, Person> entry : sorted.entrySet()) {
-			LOG.debug("FirstName = " + entry.getKey() + ", Person = " + entry.getValue().toString());
+	public void sortPersonByAttribute(String attribute) {
+		Iterator addressBookIterator = addressBookMap.entrySet().iterator();
+		while (addressBookIterator.hasNext()) {
+			Map.Entry mapElement = (Map.Entry) addressBookIterator.next();
+			AddressBook addressbook = (AddressBook) mapElement.getValue();
+			Map<String, Person> personMap = addressbook.getPersonMap();
+			LOG.debug("Sorting person by " + attribute);
+			personMap.entrySet().stream().sorted(Map.Entry.comparingByValue(getComparator(attribute)))
+					.forEach(System.out::println);
 		}
-		return sorted;
+	}
+
+	public Comparator<? super Person> getComparator(String property) {
+		Comparator<? super Person> cmp = null;
+		switch (property) {
+		case "city":
+			cmp = new SortByCity();
+			break;
+		case "state":
+			cmp = new SortByState();
+			break;
+		case "zip":
+			cmp = new SortByZip();
+			break;
+		}
+		return cmp;
 	}
 
 	/**
@@ -237,4 +258,30 @@ public class AddressBookService implements IAddressBook {
 		addressBookMap.put(name, addressBook);
 	}
 
+	Comparator<Person> compareByCity = (Person obj1, Person obj2) -> obj1.getCity().toLowerCase()
+			.compareTo(obj2.getCity().toLowerCase());
+
+	Comparator<Person> compareByState = (Person obj1, Person obj2) -> obj1.getState().toLowerCase()
+			.compareTo(obj2.getState().toLowerCase());
+
+	Comparator<Person> compareByZip = (Person obj1, Person obj2) -> obj1.getZip().toLowerCase()
+			.compareTo(obj2.getZip().toLowerCase());
+}
+
+class SortByCity implements Comparator<Person> {
+	public int compare(Person a, Person b) {
+		return a.getCity().toLowerCase().compareTo(b.getCity().toLowerCase());
+	}
+}
+
+class SortByState implements Comparator<Person> {
+	public int compare(Person a, Person b) {
+		return a.getState().toLowerCase().compareTo(b.getState().toLowerCase());
+	}
+}
+
+class SortByZip implements Comparator<Person> {
+	public int compare(Person a, Person b) {
+		return a.getZip().toLowerCase().compareTo(b.getZip().toLowerCase());
+	}
 }

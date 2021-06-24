@@ -2,7 +2,7 @@
  * Purpose:Address Book System
  * @author Ananya K
  * @version 1.0
- * @since 22/06/2021
+ * @since 24/06/2021
  * 
  */
 package com.bridgelabz;
@@ -19,6 +19,9 @@ public class AddressBookMain {
 			addressBookName.getPersonCountByCity("Bengaluru");
 			addressBookName.getPersonCountByState("Karnataka");
 			addressBookName.sortByPersonName();
+			addressBookName.sortPersonByAttribute("city");
+			addressBookName.sortPersonByAttribute("state");
+			addressBookName.sortPersonByAttribute("zip");
 		} catch (AddressBookException e) {
 			System.exit(1);
 		}

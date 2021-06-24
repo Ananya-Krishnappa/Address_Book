@@ -17,4 +17,7 @@ public interface IAddressBook {
 	public int getPersonCountByCity(String city);
 
 	public void sortByPersonName();
+
+	public void sortPersonByAttribute(String attribute);
+
 }

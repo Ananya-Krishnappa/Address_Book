@@ -1,6 +1,8 @@
 package com.bridgelabz;
 
-public class Person {
+import java.util.Comparator;
+
+public class Person implements Comparator<Person> {
 	private String firstName;
 	private String lastName;
 	private String address;
@@ -96,6 +98,11 @@ public class Person {
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	@Override
+	public int compare(Person o1, Person o2) {
+		return o1.getFirstName().compareTo(o2.getFirstName());
 	}
 
 }
