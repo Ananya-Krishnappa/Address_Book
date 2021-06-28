@@ -12,8 +12,9 @@ public class AddressBookMain {
 	public static void main(String[] args) throws AddressBookException {
 		try {
 			IAddressBook addressBookName = new AddressBookService();
-			addressBookName.addAddressBook("Book1");
-			addressBookName.populateAddressBook("Book1");
+			// addressBookName.addAddressBook("Book1");
+			// addressBookName.populateAddressBook("Book1");
+			addressBookName.readJson();
 			addressBookName.findPersonByCity("Bengaluru");
 			addressBookName.findPersonByState("Karnataka");
 			addressBookName.getPersonCountByCity("Bengaluru");
@@ -22,6 +23,7 @@ public class AddressBookMain {
 			addressBookName.sortPersonByAttribute("city");
 			addressBookName.sortPersonByAttribute("state");
 			addressBookName.sortPersonByAttribute("zip");
+			addressBookName.writeToJson();
 		} catch (AddressBookException e) {
 			System.exit(1);
 		}

@@ -2,6 +2,9 @@ package com.bridgelabz;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties
 public class AddressBook {
 	private String name;
 	private Map<String, Person> personMap;
@@ -9,6 +12,9 @@ public class AddressBook {
 	public AddressBook(String name, Map<String, Person> personMap) {
 		this.name = name;
 		this.personMap = personMap;
+	}
+
+	public AddressBook() {
 	}
 
 	@Override

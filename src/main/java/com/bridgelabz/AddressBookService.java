@@ -1,27 +1,32 @@
 package com.bridgelabz;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 
 public class AddressBookService implements IAddressBook {
 
 	private static final Logger LOG = LogManager.getLogger(AddressBookMain.class);
 	private Scanner sc;
-	private Map<String, AddressBook> addressBookMap;
+	private AddressDictionary addressDictionary;
 	private Map<String, List<Person>> cityAndPersonMap;
 	private Map<String, List<Person>> stateAndPersonMap;
 
 	public AddressBookService() {
 		this.sc = new Scanner(System.in);
-		this.addressBookMap = new HashMap<String, AddressBook>();
+		this.addressDictionary = new AddressDictionary();
 		this.cityAndPersonMap = new HashMap<String, List<Person>>();
 		this.stateAndPersonMap = new HashMap<String, List<Person>>();
 	}
@@ -73,7 +78,10 @@ public class AddressBookService implements IAddressBook {
 	 */
 	private void inputUserDetails(ActionType actionType, String bookName) throws AddressBookException {
 		try {
-			Map<String, Person> personMap = addressBookMap.get(bookName).getPersonMap();
+			AddressBook addressBook = addressDictionary.getAddressBookList().stream()
+					.filter(book -> book.getName().equalsIgnoreCase(bookName)).collect(Collectors.toList()).stream()
+					.findFirst().orElseThrow(NoSuchElementException::new);
+			Map<String, Person> personMap = addressBook.getPersonMap();
 			switch (actionType) {
 			case CREATE:
 				Person newPerson = new Person();
@@ -86,7 +94,7 @@ public class AddressBookService implements IAddressBook {
 					throw new AddressBookException(errorMessage);
 				} else {
 					personMap.put(newPerson.getFirstName(), newPerson);
-					LOG.debug(addressBookMap.get(bookName).toString());
+					LOG.debug(addressBook.toString());
 					LOG.debug("\nYou have successfully added a new person!");
 				}
 				break;
@@ -97,7 +105,7 @@ public class AddressBookService implements IAddressBook {
 				Person editedPerson = personMap.get(firstName);
 				if (null != editedPerson && null != editedPerson.getFirstName()) {
 					inputCommonFields(editedPerson);
-					LOG.debug(addressBookMap.get(bookName).toString());
+					LOG.debug(addressBook.toString());
 				}
 				break;
 			case DELETE:
@@ -105,10 +113,10 @@ public class AddressBookService implements IAddressBook {
 				LOG.info("\nEnter the first name of the person to be deleted");
 				String name = sc.nextLine();
 				personMap.remove(name);
-				LOG.debug(addressBookMap.get(bookName).toString());
+				LOG.debug(addressBook.toString());
 				break;
 			}
-			addressBookMap.get(bookName).setPersonMap(personMap);
+			addressBook.setPersonMap(personMap);
 		} catch (AddressBookException e) {
 			LOG.error(e.getMessage());
 			throw new AddressBookException(e.getMessage());
@@ -122,11 +130,8 @@ public class AddressBookService implements IAddressBook {
 	 */
 	public Map<String, List<Person>> findPersonByCity(String city) {
 		List<Person> personList = new ArrayList<Person>();
-		Iterator addressBookIterator = addressBookMap.entrySet().iterator();
-		while (addressBookIterator.hasNext()) {
-			Map.Entry mapElement = (Map.Entry) addressBookIterator.next();
-			AddressBook addressbook = (AddressBook) mapElement.getValue();
-			Map<String, Person> personMap = addressbook.getPersonMap();
+		for (AddressBook addressBook : addressDictionary.getAddressBookList()) {
+			Map<String, Person> personMap = addressBook.getPersonMap();
 			Iterator personMapIterator = personMap.entrySet().iterator();
 			while (personMapIterator.hasNext()) {
 				Map.Entry personMapEntry = (Map.Entry) personMapIterator.next();
@@ -146,11 +151,8 @@ public class AddressBookService implements IAddressBook {
 	 */
 	public Map<String, List<Person>> findPersonByState(String state) {
 		List<Person> personList = new ArrayList<Person>();
-		Iterator addressBookIterator = addressBookMap.entrySet().iterator();
-		while (addressBookIterator.hasNext()) {
-			Map.Entry mapElement = (Map.Entry) addressBookIterator.next();
-			AddressBook addressbook = (AddressBook) mapElement.getValue();
-			Map<String, Person> personMap = addressbook.getPersonMap();
+		for (AddressBook addressBook : addressDictionary.getAddressBookList()) {
+			Map<String, Person> personMap = addressBook.getPersonMap();
 			Iterator personMapIterator = personMap.entrySet().iterator();
 			while (personMapIterator.hasNext()) {
 				Map.Entry personMapEntry = (Map.Entry) personMapIterator.next();
@@ -187,11 +189,8 @@ public class AddressBookService implements IAddressBook {
 	 * This method sorts the person name in alphabetical order
 	 */
 	public void sortByPersonName() {
-		Iterator addressBookIterator = addressBookMap.entrySet().iterator();
-		while (addressBookIterator.hasNext()) {
-			Map.Entry mapElement = (Map.Entry) addressBookIterator.next();
-			AddressBook addressbook = (AddressBook) mapElement.getValue();
-			Map<String, Person> personMap = addressbook.getPersonMap();
+		for (AddressBook addressBook : addressDictionary.getAddressBookList()) {
+			Map<String, Person> personMap = addressBook.getPersonMap();
 			LOG.debug("Sorting person by first name");
 			personMap.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(System.out::println);
 		}
@@ -203,11 +202,8 @@ public class AddressBookService implements IAddressBook {
 	 * @param property
 	 */
 	public void sortPersonByAttribute(String attribute) {
-		Iterator addressBookIterator = addressBookMap.entrySet().iterator();
-		while (addressBookIterator.hasNext()) {
-			Map.Entry mapElement = (Map.Entry) addressBookIterator.next();
-			AddressBook addressbook = (AddressBook) mapElement.getValue();
-			Map<String, Person> personMap = addressbook.getPersonMap();
+		for (AddressBook addressBook : addressDictionary.getAddressBookList()) {
+			Map<String, Person> personMap = addressBook.getPersonMap();
 			LOG.debug("Sorting person by " + attribute);
 			personMap.entrySet().stream().sorted(Map.Entry.comparingByValue(getComparator(attribute)))
 					.forEach(System.out::println);
@@ -254,8 +250,7 @@ public class AddressBookService implements IAddressBook {
 	public void addAddressBook(String name) {
 		Map<String, Person> personMap = new HashMap<String, Person>();
 		AddressBook addressBook = new AddressBook(name, personMap);
-		/* addressBookList.add(addressBook); */
-		addressBookMap.put(name, addressBook);
+		addressDictionary.getAddressBookList().add(addressBook);
 	}
 
 	Comparator<Person> compareByCity = (Person obj1, Person obj2) -> obj1.getCity().toLowerCase()
@@ -266,6 +261,39 @@ public class AddressBookService implements IAddressBook {
 
 	Comparator<Person> compareByZip = (Person obj1, Person obj2) -> obj1.getZip().toLowerCase()
 			.compareTo(obj2.getZip().toLowerCase());
+
+	/**
+	 * Reading the Json file and convert to java object using Jackson ObjectMapper
+	 * readValue method
+	 * 
+	 * @throws AddressBookException
+	 */
+	public void readJson() throws AddressBookException {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			// JSON file to Java object
+			addressDictionary = mapper.readValue(
+					new File("E:\\workspace\\AddressBook\\src\\main\\resources\\addressBook.json"),
+					AddressDictionary.class);
+			System.out.println(addressDictionary.getAddressBookList().toString());
+		} catch (IOException e) {
+			throw new AddressBookException(e.getMessage());
+		}
+	}
+
+	/**
+	 * Converting the Java objects to JSON file writeValueAsString
+	 * @throws AddressBookException 
+	 */
+	public void writeToJson() throws AddressBookException {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mapper.writeValue(new File("E:\\workspace\\AddressBook\\src\\main\\resources\\addressBook.json"),
+					addressDictionary);
+		} catch (IOException e) {
+			throw new AddressBookException(e.getMessage());
+		}
+	}
 }
 
 class SortByCity implements Comparator<Person> {
