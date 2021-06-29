@@ -2,26 +2,30 @@
 	"addressBookList": [
 		{
 			"name": "AddressBook1",
-			"Ananya": {
-				"firstName": "Ananya",
-				"lastName": "gowda",
-				"address": "Whitefield",
-				"city": "Bengaluru",
-				"state": "Karnataka",
-				"zip": "1234",
-				"phoneNumber": "91 9234567812"
+			"personMap": {
+				"Ananya": {
+					"firstName": "Ananya",
+					"lastName": "gowda",
+					"address": "Whitefield",
+					"city": "Bengaluru",
+					"state": "Karnataka",
+					"zip": "1234",
+					"phoneNumber": "91 9234567812"
+				}
 			}
 		},
 		{
 			"name": "AddressBook2",
-			"Veena": {
-				"firstName": "Veena",
-				"lastName": "Krishnappa",
-				"address": "Bogadi",
-				"city": "Mysore",
-				"state": "Maharashtra",
-				"zip": "3456",
-				"phoneNumber": "91 4568761412"
+			"personMap": {
+				"Veena": {
+					"firstName": "Veena",
+					"lastName": "Krishnappa",
+					"address": "Bogadi",
+					"city": "Mysore",
+					"state": "Maharashtra",
+					"zip": "3456",
+					"phoneNumber": "91 4568761412"
+				}
 			}
 		}
 	]
