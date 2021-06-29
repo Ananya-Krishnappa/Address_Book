@@ -1,4 +1,4 @@
-package com.bridgelabz;
+package com.bridgelabz.addressbook.dto;
 
 import java.util.Comparator;
 

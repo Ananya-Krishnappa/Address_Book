@@ -1,7 +1,5 @@
-package com.bridgelabz;
+package com.bridgelabz.addressbook.service.impl;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -14,19 +12,24 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
+
+import com.bridgelabz.addressbook.dto.AddressBook;
+import com.bridgelabz.addressbook.dto.AddressDictionary;
+import com.bridgelabz.addressbook.dto.Person;
+import com.bridgelabz.addressbook.exception.AddressBookException;
+import com.bridgelabz.addressbook.service.IAddressBook;
+import com.bridgelabz.addressbook.type.ActionType;
 
 public class AddressBookService implements IAddressBook {
 
-	private static final Logger LOG = LogManager.getLogger(AddressBookMain.class);
+	private static final Logger LOG = LogManager.getLogger(AddressBookService.class);
 	private Scanner sc;
-	private AddressDictionary addressDictionary;
+	public static AddressDictionary addressDictionary = new AddressDictionary();
 	private Map<String, List<Person>> cityAndPersonMap;
 	private Map<String, List<Person>> stateAndPersonMap;
 
 	public AddressBookService() {
 		this.sc = new Scanner(System.in);
-		this.addressDictionary = new AddressDictionary();
 		this.cityAndPersonMap = new HashMap<String, List<Person>>();
 		this.stateAndPersonMap = new HashMap<String, List<Person>>();
 	}
@@ -261,39 +264,6 @@ public class AddressBookService implements IAddressBook {
 
 	Comparator<Person> compareByZip = (Person obj1, Person obj2) -> obj1.getZip().toLowerCase()
 			.compareTo(obj2.getZip().toLowerCase());
-
-	/**
-	 * Reading the Json file and convert to java object using Jackson ObjectMapper
-	 * readValue method
-	 * 
-	 * @throws AddressBookException
-	 */
-	public void readJson() throws AddressBookException {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			// JSON file to Java object
-			addressDictionary = mapper.readValue(
-					new File("E:\\workspace\\AddressBook\\src\\main\\resources\\addressBook.json"),
-					AddressDictionary.class);
-			System.out.println(addressDictionary.getAddressBookList().toString());
-		} catch (IOException e) {
-			throw new AddressBookException(e.getMessage());
-		}
-	}
-
-	/**
-	 * Converting the Java objects to JSON file writeValueAsString
-	 * @throws AddressBookException 
-	 */
-	public void writeToJson() throws AddressBookException {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			mapper.writeValue(new File("E:\\workspace\\AddressBook\\src\\main\\resources\\addressBook.json"),
-					addressDictionary);
-		} catch (IOException e) {
-			throw new AddressBookException(e.getMessage());
-		}
-	}
 }
 
 class SortByCity implements Comparator<Person> {

@@ -1,4 +1,4 @@
-package com.bridgelabz;
+package com.bridgelabz.addressbook.exception;
 
 public class AddressBookException extends Exception {
 
